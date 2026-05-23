@@ -70,7 +70,7 @@ function displayGames(games) {
                 ${isFavorite ? '❤️' : '🤍'}
             </button>
             <div class="card-image-container">
-                <img src="${backgroundImage}" alt="${game.name}" class="card-image" crossorigin="anonymous" loading="lazy">
+                <img src="${backgroundImage}" alt="${game.name}" class="card-image" loading="lazy">
             </div>
             <div class="card-content">
                 <h3>${game.name}</h3>
