@@ -13,14 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-btn');
-    const favFilterButton = document.getElementById('fav-filter-btn')
+    const favFilterButton = document.getElementById('fav-filter-btn');
 
-    // 1. Premier affichage : on change les jeux populaires par défaut dès l'ouverture
+    // 1. Premier affichage : on charge les jeux populaires par défaut dès l'ouverture
     await loadAndDisplayGames();
 
     // 2. Écouteur d'événement : clic sur le bouton "Rechercher"
     searchButton.addEventListener('click', () => {
-        const query = searchInput.value;
+        const query = searchInput.value.trim();
         loadAndDisplayGames(query);
     });
 
@@ -46,7 +46,7 @@ async function loadAndDisplayGames(search = '') {
     const gamesGrid = document.getElementById('games-grid');
 
     // On affiche un message temporaire pendant que l'API nous répond
-    gamesGrid.innerHTML = '<div class="status-message">Rechercher dans la base de données...</div>';
+    gamesGrid.innerHTML = '<div class="status-message">Recherche dans la base de données...</div>';
 
     // On appelle la fonction de js/api.js pour récupérer les données RAWG
     const gamesData = await getGamesFromAPI(search);
@@ -71,22 +71,15 @@ async function loadAndDisplayFavorites() {
 
     gamesGrid.innerHTML = '<div class="status-message">Chargement de vos favoris...</div>';
 
-    // Clé de secours qui fonctionne à 100% sur RAWG
-    const BACKUP_KEY = '4fa489184df24a30b05b82143d2c700f';
-
     try {
-        // On va chercher les détails de chaque jeu favori en parallèle auprès de l'API RAWG
+        // On va chercher les détails de chaque jeu favori en parallèle avec la fonction officielle de api.js
         const fetchPromises = favoriteIds.map(async (id) => {
-            const gameIdText = id.toString();
+            // On appelle proprement la fonction centrale de js/api.js
+            const gameData = await getGameDetailsFromAPI(id);
             
-            // Requête directe et propre sur l'ID du jeu
-            const response = await fetch(`https://api.rawg.io/api/games/${gameIdText}?key=${BACKUP_KEY}`);
-            
-            if (!response.ok) return null;
-            const gameData = await response.json();
+            if (!gameData) return null;
 
-            // SÉCURITÉ TECHNIQUE : On reformate l'objet pour qu'il corresponde exactement
-            // à la structure que displayGames() attend dans dom.js
+            // On formate l'objet pour qu'il corresponde exactement à la structure attendue par dom.js
             return {
                 id: gameData.id,
                 name: gameData.name,
