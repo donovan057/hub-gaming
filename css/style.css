@@ -237,25 +237,28 @@ main {
 
 .close-btn {
     position: absolute;
-    top: 15px;
+    top: 20px;
     right: 20px;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     cursor: pointer;
-    z-index: 10;
-    transition: transform 0.2s ease;
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    
 }
 
 .close-btn::before,
 .close-btn::after {
     content: '';
     position: absolute;
-    width: 20px;
+    width: 18px;
     height: 2px;
-    background-color: #ff4d6d;
+    background-color: #fff;
     border-radius: 1px;
     transition: background-color 0.2s ease;
 }
@@ -270,11 +273,12 @@ main {
 
 .close-btn:hover {
     transform: scale(1.1);
+    background: rgba(255, 77, 109, 0.9);
 }
 
 .close-btn::before,
 .close-btn::after {
-    background-color: #ff002b;
+    background-color: #fff;
 }
 
 #modal-body {
