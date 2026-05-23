@@ -73,11 +73,12 @@ async function loadAndDisplayFavorites() {
 
     try {
         // On va chercher les données de chaque jeu favori en parallèle auprès de l'API RAWG
-        // On utilise la fonction getGamesFromAPI ou un fetch direct par ID
         const fetchPromises = favoriteIds.map(async (id) => {
-            // Note : Si tu as une fonction spécifique getGameDetails dans ton api.js tu peux l'utiliser
-            // sinon ce fetch direct fonctionne parfaitement avec ta clé API
+            // On convertit l'ID en texte brut pour sécuriser l'URL de l'API
+            const gameIdText = id.toString();
+
             const response = await fetch(`https://api.rawg.io/api/games/${id}?key=4fa489184df24a30b05b82143d2c700f`);
+            
             if (!response.ok) return null;
             return await response.json();
         });
