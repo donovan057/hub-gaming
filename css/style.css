@@ -240,14 +240,15 @@ main {
     top: 15px;
     right: 20px;
     font-size: 2rem;
-    color: #fff;
+    color: #ff4d6d;
     cursor: pointer;
     z-index: 10;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.2s ease;
 }
 
 .close-btn:hover {
-    color: var(--accent-hover);
+    color: #ff002b;
+    transform: scale(1.15);
 }
 
 #modal-body {
