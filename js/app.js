@@ -61,7 +61,7 @@ async function loadAndDisplayGames(search = '') {
 async function loadAndDisplayFavorites() {
     const gamesGrid = document.getElementById('games-grid');
 
-    // Récupération de la liste des IDs favoris (via dom.js)
+    // Récupération de la liste des IDs favoris depuis le localStorage (via dom.js)
     const favoriteIds = getFavorites();
 
     if (favoriteIds.length === 0) {
@@ -72,24 +72,38 @@ async function loadAndDisplayFavorites() {
     gamesGrid.innerHTML = '<div class="status-message">Chargement de vos favoris...</div>';
 
     try {
-        // On va chercher les données de chaque jeu favori en parallèle auprès de l'API RAWG
+        // On va chercher les données de chaque jeu favori en parallèle
         const fetchPromises = favoriteIds.map(async (id) => {
-            // On convertit l'ID en texte brut pour sécuriser l'URL de l'API
+            // Sécurité : Conversion de l'ID en texte
             const gameIdText = id.toString();
-
-            const response = await fetch(`https://api.rawg.io/api/games/${id}?key=4fa489184df24a30b05b82143d2c700f`);
             
-            if (!response.ok) return null;
-            return await response.json();
+            // On utilise exactement la fonction de ton fichier js/api.js pour éviter les erreurs de clé !
+            // On lui passe l'ID directement comme paramètre de recherche cible
+            const gameData = await getGamesFromAPI(gameIdText);
+            
+            // getGamesFromAPI renvoie généralement un tableau ou un objet. 
+            // Si l'API renvoie un tableau de résultats, on prend le premier élément trouvé.
+            if (gameData && gameData.results && gameData.results.length > 0) {
+                return gameData.results[0];
+            } else if (gameData && gameData.id) {
+                return gameData; // Si l'objet du jeu est renvoyé directement
+            }
+            return null;
         });
 
         const favoriteGames = await Promise.all(fetchPromises);
 
-        // On filtre les éventuels échecs
+        // On nettoie le tableau pour enlever les requêtes vides ou échouées
         const cleanGamesList = favoriteGames.filter(game => game !== null);
 
-        // On affiche les cartes de nos favoris
+        if (cleanGamesList.length === 0) {
+            gamesGrid.innerHTML = '<div class="status-message">Impossible de charger les détails de vos favoris.</div>';
+            return;
+        }
+
+        // On envoie la liste nettoyée à dom.js pour l'affichage final !
         displayGames(cleanGamesList);
+        
     } catch (error) {
         console.error("Erreur lors de la récupération des favoris :", error);
         gamesGrid.innerHTML = '<div class="status-message">Une erreur est survenue lors du chargement.</div>';
