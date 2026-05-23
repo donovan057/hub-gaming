@@ -320,3 +320,31 @@ footer {
     color: #ff4d6d; /* Rouge/Rose quand le jeu est en favoris */
     border-color: #ff4d6d;
 }
+
+/* ==========================================================================
+   RESPONSIVE MOBILE 
+   ========================================================================== */
+
+@media (max-widht: 600px) {
+    header h1 {
+        font-size: 2.2rem; 
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .search-bar button {
+        width: 100%;
+        padding: 14px;
+    }
+}
