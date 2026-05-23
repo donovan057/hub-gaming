@@ -83,7 +83,20 @@ async function loadAndDisplayFavorites() {
             const response = await fetch(`https://api.rawg.io/api/games/${gameIdText}?key=${BACKUP_KEY}`);
             
             if (!response.ok) return null;
-            return await response.json();
+            const gameData = await response.json();
+
+            // SÉCURITÉ TECHNIQUE : On reformate l'objet pour qu'il corresponde exactement
+            // à la structure que displayGames() attend dans dom.js
+            return {
+                id: gameData.id,
+                name: gameData.name,
+                background_image: gameData.background_image,
+                rating: gameData.rating,
+                ratings_count: gameData.ratings_count,
+                released: gameData.released,
+                platforms: gameData.platforms,
+                genres: gameData.genres
+            };
         });
 
         const favoriteGames = await Promise.all(fetchPromises);
@@ -96,7 +109,7 @@ async function loadAndDisplayFavorites() {
             return;
         }
 
-        // On affiche les cartes de nos favoris via dom.js
+        // On envoie le tableau propre et bien formaté à dom.js !
         displayGames(cleanGamesList);
 
     } catch (error) {
