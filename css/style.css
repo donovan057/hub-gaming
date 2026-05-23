@@ -1,0 +1,322 @@
+/* ==========================================================================
+   RESET & VARIABLES GLOBALES 
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f0c20 0%, #15102a 50%, #060214 100%);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.15);
+    --text-main: #f3f1f9;
+    --text-muted: #a19bb0;
+    --accent-color: #7b2cbf; /* Violet Gaming */
+    --accent-hover: #9d4edd;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Conteneur Principal */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   HEADER & ZONE DE RECHERCHE
+   ========================================================================== */
+header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #fff, var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+/* Barre de recherche Glassmorphism */
+.search-bar {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.search-bar input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 12px 20px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.search-bar input::placeholder {
+    color: #6b6478;
+}
+
+.search-bar button {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.search-bar button:hover {
+    background: var(--accent-hover);
+    transform: scale(1.02);
+}
+
+/* ==========================================================================
+   GRILLE DES JEUX (MAIN)
+   ========================================================================== */
+main {
+    flex: 1;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+/* Cartes de jeux style Écran de verre */
+.game-card {
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--glass-highlight);
+    box-shadow: 0 12px 40px rgba(123, 44, 191, 0.15);
+}
+
+/* Ajustements pour l'affichage propre des balises <img> avec CORS */
+.card-image-container {
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.game-card:hover .card-image {
+    transform: scale(1.05); /* Effet de zoom fluide au survol de la carte */
+}
+
+.card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.card-content h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.rating {
+    background: rgba(255, 186, 8, 0.1);
+    color: #ffba08;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.released {
+    color: var(--text-muted);
+}
+
+/* Messages d'état (Chargement / Erreur) */
+.status-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+/* ==========================================================================
+   FENÊTRE POP-UP (MODALE)
+   ========================================================================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 2, 15, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: rgba(20, 15, 38, 0.7);
+    border: 1px solid var(--glass-highlight);
+    width: 90%;
+    max-width: 650px;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--accent-hover);
+}
+
+#modal-body {
+    padding: 30px;
+}
+
+.modal-header-img {
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    margin: -30px -30px 20px -30px;
+}
+
+#modal-body h2 {
+    margin-bottom: 15px;
+}
+
+#modal-body p {
+    margin-bottom: 10px;
+    color: #d2cee0;
+    font-size: 0.95rem;
+}
+
+#modal-body strong {
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+    color: #554f6c;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   BOUTON FAVORIS (COEUR)
+   ========================================================================== */
+
+.favorite-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(15, 12, 32, 0.7);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    z-index: 5;
+    transition: transform 0.2s ease, background 0.2 ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.15);
+    background: rgba(123, 44, 191, 0.9); /* Devient violet au survol */
+}
+
+.favorite-btn.is-fav {
+    color: #ff4d6d; /* Rouge/Rose quand le jeu est en favoris */
+    border-color: #ff4d6d;
+}
